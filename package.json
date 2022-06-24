@@ -5,6 +5,7 @@
     "discord.js": "^13.8.0",
     "dotenv": "^16.0.1",
     "fs": "^0.0.1-security",
+    "lodash": "^4.17.21",
     "nodemon": "^2.0.16"
   },
   "scripts": {
