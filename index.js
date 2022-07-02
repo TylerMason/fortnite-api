@@ -10,8 +10,11 @@ const client = new Discord.Client({
 
 client.on("ready", async() => {
     console.log(chalk.bold.green(`Discord Bot ${client.user.tag} is online!`))
+    client.user.setPresence({ activities: [{ name: 'with fortnite apis' }] });
     const commands = await client.application.commands.fetch()
     const mapslash = require('./slash-json/map.json')
+    const newsslash = require('./slash-json/news.json')
+    //client.application.commands.create(newsslash)
     /*if (commands.has()) {
         console.log(chalk.red("Map command isn't registered"))
         client.application.commands.create(mapslash)
@@ -37,17 +40,39 @@ client.on('interactionCreate', async(interaction) => {
             })
             if (req) {
                 req = req.data
-                console.log(req)
                 const embed = new Discord.MessageEmbed()
                 .setColor('RANDOM')
                 .setTitle("Fortnite Map")
-                .setImage(req.images.pois)
+                .setImage(req.data.images.pois)
                 .setFooter(client.user.username, client.user.displayAvatarURL())
                 interaction.reply({embeds : [embed]})
                 console.log(chalk.gray(`Responded to ${interaction.user.username}(${interaction.user.id}) | Map Slash Command`))
 
 
             }
+        }
+        else if (interaction.commandName === "news") {
+            const gamemode = await interaction.options.getString("gamemode")
+            let req = await axios({
+                method : "get",
+                url : `https://fortnite-api.com/v2/news/${gamemode}`
+            })
+            .catch(e => {
+                console.error(e.toJSON())
+                return interaction.reply({"content": "An error occured! Please try later :)"})
+            })
+            if (req) {   
+                req = req.data
+                const embed = new Discord.MessageEmbed()
+                .setColor('RANDOM')
+                .setTitle("Fortnite News for " + gamemode.toUpperCase())
+                .setImage(req.data.image)
+                .setFooter(client.user.username, client.user.displayAvatarURL())
+                interaction.reply({embeds : [embed]})
+                console.log(chalk.gray(`Responded to ${interaction.user.username}(${interaction.user.id}) | News Slash Command`))
+
+            }
+            
         }
     }
 })
